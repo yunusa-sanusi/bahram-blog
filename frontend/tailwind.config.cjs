@@ -17,8 +17,7 @@ module.exports = {
         v: '#FE90EC',
         b: '#27AEFF',
         g: '#00DC90',
-        gray: '#FF5480',
-        pn: '#FF5480',
+        gray: '#e4e4e4',
         background: '#F9F9Fb',
       },
       colors: {

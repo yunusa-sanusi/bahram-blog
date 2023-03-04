@@ -3,8 +3,8 @@ import * as yup from 'yup';
 const passwordRule =
   /^(?=.*\d)(?=.*[a-zA-Z])(?=.*[A-Z])(?=.*[-\#\$\.\%\&\*])(?=.*[a-zA-Z]).{8,16}/;
 
-export const userFormSchema = yup.object().shape({
-  fullName: yup.string().required('Please enter your fullname'),
+export const userSignupFormSchema = yup.object().shape({
+  fullname: yup.string().required('Please enter your fullname'),
   username: yup.string().required('Please enter your username'),
   email: yup
     .string()
@@ -19,5 +19,14 @@ export const userFormSchema = yup.object().shape({
     .required('Please enter your password'),
   confirmPassword: yup
     .string()
-    .oneOf([yup.ref('password')], 'Your password must match.'),
+    .oneOf([yup.ref('password')], 'Your password must match.')
+    .required('Please Confirm your Password'),
+});
+
+export const userLoginFormSchema = yup.object().shape({
+  email: yup
+    .string()
+    .email('Please enter a valid email')
+    .required('Please enter your email'),
+  password: yup.string().required('Please enter your password'),
 });

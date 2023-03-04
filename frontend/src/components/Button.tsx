@@ -1,10 +1,28 @@
-const Button = () => {
+import { ButtonType } from '../models/ButtonTypes';
+
+type ButtonPropTypes = {
+  type: ButtonType;
+  text: string;
+  className: string;
+  disabled?: boolean;
+  handleClick?: () => void;
+};
+
+const Button = ({
+  type,
+  text,
+  className,
+  disabled,
+  handleClick,
+}: ButtonPropTypes) => {
   return (
     <button
-      type="button"
-      className="flex justify-center items-center bg-pn px-3 py-1 rounded-md text-white font-semibold"
+      type={type}
+      className={`${className}`}
+      disabled={disabled}
+      onClick={handleClick}
     >
-      Button
+      {text}
     </button>
   );
 };

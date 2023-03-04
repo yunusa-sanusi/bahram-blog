@@ -1,18 +1,15 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
-import InputField from './components/InputField';
-import Button from './components/Button';
+import Auth from './pages/Auth';
 
 function App() {
   return (
     <div className="bg-background">
-      <InputField />
-      <Button />
-      {/* <BrowserRouter>
+      <BrowserRouter>
         <Routes>
-          <Route />
+          <Route path="auth" element={<Auth />} />
         </Routes>
-      </BrowserRouter> */}
+      </BrowserRouter>
     </div>
   );
 }
