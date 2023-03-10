@@ -1,8 +1,14 @@
 import { Form, Formik, FormikProps, FormikHelpers } from 'formik';
+import { useNavigate } from 'react-router-dom';
 
 import { userSignupFormSchema } from '../../utils/schema/userForm';
 import InputField from '../InputField';
 import Button from '../Button';
+
+import {
+  createAuthUserWithEmailAndPassword,
+  createUserDocumentFromAuth,
+} from '../../utils/firebase/auth';
 
 type Values = {
   fullname: string;
@@ -13,6 +19,8 @@ type Values = {
 };
 
 const SignUpForm = () => {
+  const navigate = useNavigate();
+
   const initialInputValues = {
     fullname: '',
     username: '',
@@ -25,9 +33,34 @@ const SignUpForm = () => {
     values: Values,
     actions: FormikHelpers<Values>,
   ) => {
-    console.log('values:', values);
-    console.log('actions:', actions);
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    try {
+      const { user } = await createAuthUserWithEmailAndPassword(
+        values.email,
+        values.password,
+      );
+
+      const { emailVerified, photoURL, uid } = user;
+
+      const data = {
+        displayName: values.fullname,
+        email: values.email,
+        emailVerified,
+        photoURL: photoURL ? photoURL : '',
+        uid,
+        username: values.username,
+      };
+
+      await createUserDocumentFromAuth(data);
+      actions.resetForm();
+      navigate('/');
+    } catch (error: any) {
+      if (error.code === 'auth/invalid-email') {
+        actions.setFieldError('email', 'Invalid Email');
+      }
+      if (error.code === 'auth/email-already-in-use') {
+        actions.setFieldError('email', 'Email already in use');
+      }
+    }
   };
 
   return (

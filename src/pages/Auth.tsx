@@ -4,6 +4,7 @@ import LoginForm from '../components/forms/LoginForm';
 import SignUpForm from '../components/forms/SignUpForm';
 import Button from '../components/Button';
 import { useFormViewContext } from '../contexts/FormViewContext';
+import ImageUpload from '../components/forms/ImageUpload';
 
 const Auth = () => {
   const { view, handleFormView } = useFormViewContext();

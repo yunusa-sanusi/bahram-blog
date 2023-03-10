@@ -1,9 +1,16 @@
 import { Formik, Form, FormikProps, FormikHelpers } from 'formik';
+import { useNavigate } from 'react-router-dom';
 
 import Button from '../Button';
 import InputField from '../InputField';
 import { userLoginFormSchema } from '../../utils/schema/userForm';
 import GoogleIconSvg from '../GoogleIconSvg';
+
+import {
+  signInWithGooglePopup,
+  emailPasswordLogin,
+  createUserDocumentFromAuth,
+} from '../../utils/firebase/auth';
 
 type Values = {
   email: string;
@@ -11,6 +18,8 @@ type Values = {
 };
 
 const LoginForm = () => {
+  const navigate = useNavigate();
+
   const initialFormValues = {
     email: '',
     password: '',
@@ -20,8 +29,33 @@ const LoginForm = () => {
     values: Values,
     actions: FormikHelpers<Values>,
   ) => {
-    console.log('values:', values);
-    console.log('actions:', actions);
+    try {
+      await emailPasswordLogin(values.email, values.password);
+      navigate('/');
+    } catch (error: any) {
+      if (error.code === 'auth/user-not-found') {
+        console.log('user not found');
+        actions.setFieldError('email', 'User not found');
+      }
+
+      if (error.code === 'auth/wrong-password') {
+        actions.setFieldError('password', 'Wrong password');
+      }
+    }
+    // actions.resetForm();
+  };
+
+  const signInWithGoogle = async () => {
+    const { user } = await signInWithGooglePopup();
+    const { displayName, email, emailVerified, photoURL, uid } = user;
+    const data = {
+      displayName: displayName ? displayName : '',
+      email: email ? email : '',
+      emailVerified,
+      photoURL: photoURL ? photoURL : '',
+      uid,
+    };
+    await createUserDocumentFromAuth(data);
   };
 
   return (
@@ -34,7 +68,11 @@ const LoginForm = () => {
         return (
           <Form className="w-[400px] bg-white rounded-b-lg p-10 shadow-sm shadow-[#979797]">
             <div>
-              <button className="rounded-md w-full border border-black py-2 flex justify-center items-center hover:text-hover text-sm shadow-sm shadow-[#979797] shadow-sm shadow-[#979797]">
+              <button
+                type="button"
+                className="rounded-md w-full border border-black py-2 flex justify-center items-center hover:text-hover text-sm shadow-sm shadow-[#979797]"
+                onClick={signInWithGoogle}
+              >
                 <GoogleIconSvg /> Sign In with Google
               </button>
               <div className="my-4 flex justify-center items-center">
