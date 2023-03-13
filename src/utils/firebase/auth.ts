@@ -55,6 +55,15 @@ export const createUserDocumentFromAuth = async (userAuth: UserAuthType) => {
   return userDocRef;
 };
 
+export const getUserDocument = async (uid: string) => {
+  if (!uid) return;
+
+  const userDocRef = doc(db, 'users', uid);
+  const userSnapshot = await getDoc(userDocRef);
+
+  if (userSnapshot.exists()) return userSnapshot;
+};
+
 export const signInWithGooglePopup = () => signInWithPopup(auth, provider);
 
 export const createAuthUserWithEmailAndPassword = async (
@@ -81,7 +90,7 @@ export const updateUserPassword = async (newPassword: string) => {
     return await updatePassword(auth.currentUser, newPassword);
 };
 
-export const onAuthStateChangeListener = (callback: () => void) => {
+export const onAuthStateChangeListener = (callback: (user: any) => void) => {
   return onAuthStateChanged(auth, callback);
 };
 
